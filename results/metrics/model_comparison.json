@@ -1,0 +1,25 @@
+{
+  "best_model": {
+    "model_name": "Best Model (Real-Only, Normalized)",
+    "model_path": "results_pinn_fixed/checkpoints/pinn_best_model_fixed.keras",
+    "rmse": 0.0772671126827583,
+    "mae": 0.0607836481328752,
+    "r2": 0.7710002688420765,
+    "rmse_median": 0.06897339322970006,
+    "rmse_dry": 0.056720692274984504,
+    "monotonicity": 1.0,
+    "boundary": 1.0
+  },
+  "final_model": {
+    "model_name": "Final Model (Real + 3,000 Synthetic)",
+    "model_path": "results_pinn_fixed/checkpoints/pinn_final_model_fixed.keras",
+    "rmse": 0.0788561560925796,
+    "mae": 0.062132810391668604,
+    "r2": 0.7614843878517603,
+    "rmse_median": 0.07237811244883707,
+    "rmse_dry": 0.05805521898230973,
+    "monotonicity": 1.0,
+    "boundary": 1.0
+  },
+  "test_samples": 84
+}

@@ -1,0 +1,30 @@
+{
+  "n_samples": 556,
+  "n_features": 20,
+  "n_swcc_points": 100,
+  "feature_columns": [
+    "D10",
+    "D30",
+    "D50",
+    "D60",
+    "D90",
+    "Cu",
+    "Cc",
+    "clay_pct",
+    "silt_pct",
+    "sand_pct",
+    "bulk_density",
+    "particle_density",
+    "porosity",
+    "void_ratio",
+    "Gs",
+    "OM_content",
+    "pH",
+    "EC",
+    "theta_s",
+    "theta_r"
+  ],
+  "train_size": 389,
+  "val_size": 83,
+  "test_size": 84
+}

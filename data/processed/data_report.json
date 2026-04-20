@@ -1,0 +1,435 @@
+{
+  "total_tables": 38,
+  "table_names": [
+    "lab_drying_t-k",
+    "comment_field_hydr_cond",
+    "comment_soil_properties",
+    "lab_wetting_h-t",
+    "comment_field_sat_cond",
+    "comment_field_wat_ret",
+    "field_wetting_t-k",
+    "comment_lab_general",
+    "field_wetting_h-k",
+    "methodology",
+    "publication",
+    "lab_drying_t-d",
+    "comment_general",
+    "aggregate_size_distribution",
+    "contact_person",
+    "lab_wetting_h-k",
+    "soil_properties",
+    "lab_wetting_t-k",
+    "field_drying_t-k",
+    "field_wetting_t-d",
+    "comment_field_general",
+    "field_drying_h-k",
+    "lab_wetting_t-d",
+    "a_database_description",
+    "comment_lab_sat_cond",
+    "field_drying_h-t",
+    "general",
+    "code_filter",
+    "field_drying_t-d",
+    "lab_drying_h-t",
+    "comment_lab_hydr_cond",
+    "field_wetting_h-t",
+    "only_codes",
+    "lab_drying_h-k",
+    "summary_of_tabular_data",
+    "comment_lab_wat_ret",
+    "mineralogy",
+    "particle_size"
+  ],
+  "total_samples": 0,
+  "data_quality": {
+    "lab_drying_t-k": {
+      "rows": 5676,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 499,
+        "conductivity": 499
+      }
+    },
+    "comment_field_hydr_cond": {
+      "rows": 6,
+      "columns": 2,
+      "missing_values": {
+        "comment_fhc_ID": 0,
+        "comment_fhc": 1
+      }
+    },
+    "comment_soil_properties": {
+      "rows": 134,
+      "columns": 2,
+      "missing_values": {
+        "comment_soilprop_ID": 0,
+        "comment_soilprop": 1
+      }
+    },
+    "lab_wetting_h-t": {
+      "rows": 1285,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 757,
+        "theta": 757
+      }
+    },
+    "comment_field_sat_cond": {
+      "rows": 8,
+      "columns": 2,
+      "missing_values": {
+        "comment_fsc_ID": 0,
+        "comment_fsc": 1
+      }
+    },
+    "comment_field_wat_ret": {
+      "rows": 8,
+      "columns": 2,
+      "missing_values": {
+        "comment_fwr_ID": 0,
+        "comment_fwr": 1
+      }
+    },
+    "field_wetting_t-k": {
+      "rows": 790,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 790,
+        "conductivity": 790
+      }
+    },
+    "comment_lab_general": {
+      "rows": 144,
+      "columns": 2,
+      "missing_values": {
+        "comment_lab_ID": 0,
+        "comment_lab": 1
+      }
+    },
+    "field_wetting_h-k": {
+      "rows": 790,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 790,
+        "conductivity": 790
+      }
+    },
+    "methodology": {
+      "rows": 790,
+      "columns": 11,
+      "missing_values": {
+        "code": 0,
+        "comment_general_ID": 0,
+        "comment_soilprop_ID": 0,
+        "comment_fwr_ID": 0,
+        "comment_lwr_ID": 0,
+        "comment_fhc_ID": 0,
+        "comment_lhc_ID": 0,
+        "comment_fsc_ID": 0,
+        "comment_lsc_ID": 0,
+        "comment_field_ID": 0,
+        "comment_lab_ID": 0
+      }
+    },
+    "publication": {
+      "rows": 99,
+      "columns": 2,
+      "missing_values": {
+        "publication_ID": 0,
+        "publication": 1
+      }
+    },
+    "lab_drying_t-d": {
+      "rows": 2154,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 698,
+        "diffusivity": 698
+      }
+    },
+    "comment_general": {
+      "rows": 213,
+      "columns": 2,
+      "missing_values": {
+        "comment_general_ID": 0,
+        "comment_general": 2
+      }
+    },
+    "aggregate_size_distribution": {
+      "rows": 851,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "dry_aggregate_size": 780,
+        "dry_aggregate_percentage": 780
+      }
+    },
+    "contact_person": {
+      "rows": 58,
+      "columns": 2,
+      "missing_values": {
+        "contact_person_ID": 0,
+        "contact_person": 1
+      }
+    },
+    "lab_wetting_h-k": {
+      "rows": 853,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 782,
+        "conductivity": 782
+      }
+    },
+    "soil_properties": {
+      "rows": 790,
+      "columns": 14,
+      "missing_values": {
+        "code": 0,
+        "bulk_density": 28,
+        "particle_density": 391,
+        "porosity": 420,
+        "OM_content": 402,
+        "k_sat": 361,
+        "theta_sat": 485,
+        "CEC": 640,
+        "pH": 490,
+        "electrolyte_level": 764,
+        "SAR": 710,
+        "ESP": 771,
+        "EC": 728,
+        "free_Fe_Al_oxide": 776
+      }
+    },
+    "lab_wetting_t-k": {
+      "rows": 986,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 770,
+        "conductivity": 770
+      }
+    },
+    "field_drying_t-k": {
+      "rows": 5887,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 496,
+        "conductivity": 496
+      }
+    },
+    "field_wetting_t-d": {
+      "rows": 790,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 790,
+        "diffusivity": 790
+      }
+    },
+    "comment_field_general": {
+      "rows": 50,
+      "columns": 2,
+      "missing_values": {
+        "comment_field_ID": 0,
+        "comment_field": 1
+      }
+    },
+    "field_drying_h-k": {
+      "rows": 3473,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 646,
+        "conductivity": 646
+      }
+    },
+    "lab_wetting_t-d": {
+      "rows": 801,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 788,
+        "diffusivity": 788
+      }
+    },
+    "a_database_description": {
+      "rows": 278,
+      "columns": 11,
+      "missing_values": {
+        "Type": 0,
+        "Name": 0,
+        "Field name": 24,
+        "Data type": 24,
+        "Data subtype": 69,
+        "Indexation": 62,
+        "Duplicates allowed": 229,
+        "Size characters": 234,
+        "Required": 24,
+        "Default value": 110,
+        "Notes": 165
+      }
+    },
+    "comment_lab_sat_cond": {
+      "rows": 8,
+      "columns": 2,
+      "missing_values": {
+        "comment_lsc_ID": 0,
+        "comment_lsc": 1
+      }
+    },
+    "field_drying_h-t": {
+      "rows": 3274,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 653,
+        "theta": 653
+      }
+    },
+    "general": {
+      "rows": 790,
+      "columns": 20,
+      "missing_values": {
+        "code": 0,
+        "family": 187,
+        "series": 0,
+        "texture": 14,
+        "structure": 443,
+        "depth_upper": 105,
+        "depth_lower": 105,
+        "horizon": 139,
+        "depth_gwater": 658,
+        "location": 32,
+        "site_ID": 102,
+        "annual_rain": 352,
+        "avetemp_jan": 482,
+        "avetemp_jul": 481,
+        "date": 177,
+        "publication_ID": 0,
+        "keyword": 55,
+        "contact_person_ID": 0,
+        "rating": 477,
+        "rated_by": 532
+      }
+    },
+    "code_filter": {
+      "rows": 3,
+      "columns": 1,
+      "missing_values": {
+        "texture": 0
+      }
+    },
+    "field_drying_t-d": {
+      "rows": 2016,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "theta": 734,
+        "diffusivity": 734
+      }
+    },
+    "lab_drying_h-t": {
+      "rows": 8126,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 60,
+        "theta": 60
+      }
+    },
+    "comment_lab_hydr_cond": {
+      "rows": 25,
+      "columns": 2,
+      "missing_values": {
+        "comment_lhc_ID": 0,
+        "comment_lhc": 1
+      }
+    },
+    "field_wetting_h-t": {
+      "rows": 796,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 788,
+        "theta": 788
+      }
+    },
+    "only_codes": {
+      "rows": 790,
+      "columns": 1,
+      "missing_values": {
+        "codes": 0
+      }
+    },
+    "lab_drying_h-k": {
+      "rows": 6803,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "preshead": 367,
+        "conductivity": 367
+      }
+    },
+    "summary_of_tabular_data": {
+      "rows": 790,
+      "columns": 22,
+      "missing_values": {
+        "general_code": 0,
+        "summary_of_tabular_data_field_code": 0,
+        "CountOfdry_aggregate_size": 0,
+        "CountOfmineral_type": 0,
+        "CountOfparticle_size": 0,
+        "count_fld_dry_h-k_CountOfpreshead": 0,
+        "count_fld_dry_h-t_CountOfpreshead": 0,
+        "count_fld_dry_t-d_CountOftheta": 0,
+        "count_fld_dry_t-k_CountOftheta": 0,
+        "count_fld_wet_h-k_CountOfpreshead": 0,
+        "count_fld_wet_h-t_CountOfpreshead": 0,
+        "count_fld_wet_t-d_CountOftheta": 0,
+        "count_fld_wet_t-k_CountOftheta": 0,
+        "summary_of_tabular_data_lab_code": 0,
+        "count_lab_dry_h-k_CountOfpreshead": 0,
+        "count_lab_dry_h-t_CountOfpreshead": 0,
+        "count_lab_dry_t-d_CountOftheta": 0,
+        "count_lab_dry_t-k_CountOftheta": 0,
+        "count_lab_wet_h-k_CountOfpreshead": 0,
+        "count_lab_wet_h-t_CountOfpreshead": 0,
+        "count_lab_wet_t-d_CountOftheta": 0,
+        "count_lab_wet_t-k_CountOftheta": 0
+      }
+    },
+    "comment_lab_wat_ret": {
+      "rows": 25,
+      "columns": 2,
+      "missing_values": {
+        "comment_lwr_ID": 0,
+        "comment_lwr": 1
+      }
+    },
+    "mineralogy": {
+      "rows": 863,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "mineral_type": 758,
+        "mineral_fraction": 758
+      }
+    },
+    "particle_size": {
+      "rows": 4251,
+      "columns": 3,
+      "missing_values": {
+        "code": 0,
+        "particle_size": 77,
+        "particle_fraction": 77
+      }
+    }
+  }
+}

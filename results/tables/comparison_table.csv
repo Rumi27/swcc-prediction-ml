@@ -1,0 +1,6 @@
+Model,Global RMSE,Global MAE,Global R2,Median Per-Sample RMSE,Dry-end RMSE (psi>1e4 kPa),Monotonicity (%),Boundary Satisfaction (%),Note
+"VGParamNet (Run B, lambda_psi50=0.2)",0.08295796467954973,0.058115603736972415,0.7360256181462799,0.0651808072706732,0.05130589311212718,100.00%,100.00%,Best run — physically valid alpha distribution
+"VGParamNet (Run A, lambda_psi50=0.1)",0.09201465424356177,0.0693876639396539,0.6752421916275115,0.0771466246702566,0.07844877599032198,100.00%,100.00%,alpha median high (0.57) but not degenerate
+"VGParamNet (Run C, lambda_slope=0.05)",0.08885973569977368,0.06819940969388796,0.6971304312696224,0.07577641459601368,0.10319808278733644,100.00%,100.00%,DEGENERATE: alpha collapsed to 1.0 — slope loss harmful
+"VGParamNet (Run D, slope+Huber+curriculum)",0.08032011508928162,0.060829953257176224,0.75254613070956,0.06820501607234357,0.08678304321661891,100.00%,100.00%,DEGENERATE: alpha collapsed to 1.0 — slope loss harmful
+VGParamNetAblation (theta_s and theta_r excluded),0.10472598038588796,0.08594805539476931,0.5793174728592168,0.085198693279321,0.09861559511690791,100.00%,100.00%,Ablation: removing theta_s/theta_r inputs increases RMSE by 2.2% relative to Run B

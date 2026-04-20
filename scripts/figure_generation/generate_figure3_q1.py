@@ -1,0 +1,453 @@
+#!/usr/bin/env python3
+"""
+Figure 3 — SWCC Dataset Overview and Preprocessing
+Q1 journal quality — same canvas & typography as Figure 18 Q1 (generate_figure18_q1.py).
+
+Layout: 2 rows x 2 columns
+  (a) [top-left]  Dataset diversity -- 100 sampled SWCC curves + 5 representative
+                  examples spanning sandy -> clayey soils
+  (b) [top-right] Statistical envelope -- all curves faint + mean theta +/- 1 SD band
+  (c) [bot-left]  Train / Validation / Test split -- each subset in its own colour
+                  with per-subset mean curve
+  (d) [bot-right] Saturated water content (theta_s) distribution -- histogram showing
+                  the range of soil types; train/val/test stacked bars
+
+Data source (pre-processed, no retraining needed):
+  data_processed/y_train.npy      -- 389 SWCC curves (training set,  70%)
+  data_processed/y_val.npy        --  83 SWCC curves (validation set, 15%)
+  data_processed/y_test.npy       --  84 SWCC curves (test set,       15%)
+  data_processed/suction_grid.npy -- 100-point log psi grid (kPa)
+
+Design (aligned with Figure 18 Q1)
+------
+* 7.0 in wide x 7.6 in tall, 2x2 grid; hspace=0.58, wspace=0.44; margins match Fig. 18
+* Arial 12 pt (FONT_MAIN): axis titles, panel tags
+* Arial 11 pt (FONT_TICK_Y): y-axis tick numerals — same on every panel (a–d)
+* Arial 11 pt (FONT_TICK): panel (d) x-axis tick numerals; default x where not ψ
+* Arial 8 pt (FONT_TICK_XLOG): ψ x-tick numerals (panels a–c)
+* Arial 10 pt (FONT_SMALL): arrow callouts, infoboxes, panel (d) colour key
+* ψ x-ticks: full labels … 100000, 1000000 (horizontal)
+* Legend boxes replaced by direct arrow annotations on lines/bands
+* Panel tags outside top-left (y=1.03); no grid; inward ticks mirrored; clean box
+* 600 dpi PNG (-> paper_figures/png/) + PDF (-> paper_figures/)
+* pdf.fonttype = 42
+"""
+
+from __future__ import annotations
+from pathlib import Path
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from matplotlib.lines import Line2D
+
+ROOT    = Path(__file__).resolve().parents[2]
+PNG_DIR = ROOT / "paper_figures" / "png"
+PDF_DIR = ROOT / "paper_figures"
+PNG_DIR.mkdir(parents=True, exist_ok=True)
+
+FONT_MAIN  = 10   # axis titles, panel tags
+FONT_TICK_Y = 8  # y-axis tick numerals — uniform on all panels
+FONT_TICK  = 8   # panel (d) x-axis ticks; default x in _style when not ψ
+FONT_TICK_XLOG = 8   # ψ log-axis x ticks (horizontal; slightly smaller to avoid overlap)
+FONT_SMALL = 10   # annotations, infoboxes, small legend
+LW         = 1.8
+
+matplotlib.rcParams.update({
+    "text.usetex": False,
+    "axes.formatter.use_mathtext": False,
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans", "Liberation Sans"],
+    "font.size": FONT_MAIN,
+    "axes.labelsize": FONT_MAIN,
+    "xtick.labelsize": FONT_TICK,
+    "ytick.labelsize": FONT_TICK_Y,
+    "legend.fontsize": FONT_SMALL,
+    "axes.linewidth": 0.8,
+    "xtick.major.width": 0.8,
+    "ytick.major.width": 0.8,
+    "xtick.major.size": 4,
+    "ytick.major.size": 4,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+    "axes.unicode_minus": False,
+})
+
+# ---- Palette ----------------------------------------------------------------
+C_TRAIN  = "#1F77B4"   # blue   -- training set
+C_VAL    = "#E07B00"   # dark orange -- validation set
+C_TEST   = "#2CA02C"   # green  -- test set
+C_BACK   = "#7BA7C7"   # muted blue -- background curves
+C_MEAN   = "#C62828"   # dark red   -- mean curve
+C_SD     = "#EF9A9A"   # light red  -- +/-1 SD fill
+C_SD_DARK= "#C62828"   # for SD annotation text
+C_REP    = "#B71C1C"   # deep red   -- representative examples
+
+XTICKS_PSI  = [1e-1, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6]
+XLABELS_PSI = [
+    "0.1", "1", "10", "100", "1000", "10000", "100000", "1000000",
+]
+Y_MAX = 0.85
+
+
+# ---- Style helpers ----------------------------------------------------------
+def _style(ax, *, xticks_fs=FONT_TICK, yticks_fs=FONT_TICK_Y):
+    ax.set_facecolor("white")
+    for sp in ax.spines.values():
+        sp.set_linewidth(0.8)
+        sp.set_color("black")
+    ax.tick_params(which="both", top=True, right=True, direction="in")
+    ax.tick_params(axis="x", labelsize=xticks_fs)
+    ax.tick_params(axis="y", labelsize=yticks_fs)
+    ax.grid(False)
+    for lbl in ax.get_xticklabels():
+        lbl.set_fontfamily("Arial")
+        lbl.set_fontsize(xticks_fs)
+    for lbl in ax.get_yticklabels():
+        lbl.set_fontfamily("Arial")
+        lbl.set_fontsize(yticks_fs)
+
+
+def _psi_xaxis(ax, psi):
+    ax.set_xscale("log")
+    ax.set_xticks(XTICKS_PSI)
+    ax.set_xticklabels(
+        XLABELS_PSI, fontsize=FONT_TICK_XLOG,
+        fontfamily="Arial", rotation=0, ha="center",
+    )
+    ax.set_xlim(float(psi.min()) * 0.9, float(psi.max()) * 1.1)
+    ax.set_xlabel("Matric suction \u03c8  (kPa)",
+                  fontsize=FONT_MAIN, fontfamily="Arial", labelpad=9)
+
+
+def _swcc_yaxis(ax):
+    ax.set_ylabel("Volumetric water content \u03b8  [\u2212]",
+                  fontsize=FONT_MAIN, fontfamily="Arial", labelpad=5)
+    ax.set_ylim(0, Y_MAX)
+    ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8])
+    ax.tick_params(axis="y", labelsize=FONT_TICK_Y)
+
+
+def _panel_tag(ax, tag):
+    ax.text(0.0, 1.03, tag, transform=ax.transAxes,
+            fontsize=FONT_MAIN, fontweight="normal", fontfamily="Arial",
+            va="bottom", ha="left", clip_on=False)
+
+
+def _arrow_label(ax, text, xy_data, xy_text_ax, color,
+                 ha="center", va="top", rad=0.0):
+    """
+    Arrow annotation: text at axes-fraction position xy_text_ax,
+    arrow tip at data-coordinate position xy_data.
+    No border box — white background only for readability.
+    """
+    ax.annotate(
+        text,
+        xy=xy_data, xycoords="data",
+        xytext=xy_text_ax, textcoords="axes fraction",
+        fontsize=FONT_SMALL, fontfamily="Arial", color=color,
+        ha=ha, va=va,
+        arrowprops=dict(
+            arrowstyle="->", color=color, lw=1.0,
+            connectionstyle=f"arc3,rad={rad}",
+        ),
+        bbox=dict(boxstyle="round,pad=0.18", facecolor="white",
+                  edgecolor="none", alpha=0.88),
+        zorder=8,
+    )
+
+
+def _infobox(ax, text, x=0.97, y=0.97, ha="right", va="top"):
+    ax.text(x, y, text,
+            transform=ax.transAxes, fontsize=FONT_SMALL - 1,
+            fontfamily="Arial", va=va, ha=ha,
+            bbox=dict(boxstyle="round,pad=0.30", facecolor="white",
+                      edgecolor="#888888", linewidth=0.7, alpha=0.95))
+
+
+# ---- Panel (a): Dataset diversity -------------------------------------------
+def _plot_panel_a(ax, psi, y_all):
+    rng = np.random.default_rng(42)
+    idx_bg = rng.choice(len(y_all), min(100, len(y_all)), replace=False)
+
+    # background curves
+    for i in idx_bg:
+        ax.semilogx(psi, y_all[i], color=C_BACK, alpha=0.18, lw=0.5, zorder=1)
+
+    # 5 representative examples by theta_s quintile
+    theta_s = y_all.max(axis=1)
+    rep_indices = [int(np.argmin(np.abs(theta_s - np.percentile(theta_s, p))))
+                   for p in [5, 25, 50, 75, 95]]
+    for i in rep_indices:
+        ax.semilogx(psi, y_all[i], color=C_REP, alpha=0.88, lw=2.0, zorder=3)
+
+    # ---- arrow annotations (replace legend) ----
+    # Arrow to a background curve at psi[40]; nudge ~1–2 mm upward in data y (~0.02 θ)
+    _y_indiv = float(y_all[idx_bg[15], 40])
+    _y_indiv = min(_y_indiv + 0.02, Y_MAX - 0.02)
+    _arrow_label(ax,
+                 f"Individual SWCCs\n(100 of {len(y_all)} shown)",
+                 xy_data=(psi[40], _y_indiv),
+                 xy_text_ax=(0.90, 0.70),
+                 color=C_BACK, ha="right", va="top", rad=-0.2)
+
+    # Arrow to 75th-percentile representative curve at psi[35]=29.8 kPa, theta=0.428
+    _arrow_label(ax,
+                 "Representative examples\n(sandy \u2192 clayey)",
+                 xy_data=(psi[35], float(y_all[rep_indices[3], 35])),
+                 xy_text_ax=(0.37, 0.88),
+                 color=C_REP, ha="center", va="top", rad=0.25)
+
+    # Sample count info box (top right)
+    _infobox(ax, f"N = {len(y_all)} soil samples\n"
+                 f"\u03b8 range: [{y_all.min():.2f}, {y_all.max():.2f}]",
+             x=0.97, y=0.97, ha="right", va="top")
+
+    _psi_xaxis(ax, psi)
+    _swcc_yaxis(ax)
+    _style(ax, xticks_fs=FONT_TICK_XLOG, yticks_fs=FONT_TICK_Y)
+    _panel_tag(ax, f"(a) Dataset diversity  (N = {len(y_all)})")
+
+
+# ---- Panel (b): Statistical envelope ----------------------------------------
+def _plot_panel_b(ax, psi, y_all):
+    for i in range(len(y_all)):
+        ax.semilogx(psi, y_all[i], color=C_BACK, alpha=0.04, lw=0.3, zorder=1)
+
+    mean_c = np.mean(y_all, axis=0)
+    std_c  = np.std(y_all,  axis=0)
+
+    ax.fill_between(psi,
+                    np.clip(mean_c - std_c, 0, None),
+                    mean_c + std_c,
+                    color=C_SD, alpha=0.55, zorder=2)
+    ax.semilogx(psi, mean_c, color=C_MEAN, lw=2.5, zorder=4)
+
+    # ---- arrow annotations ----
+    # Arrow to mean curve at psi[30]=13.2 kPa, mean=0.264
+    _arrow_label(ax,
+                 f"Mean \u03b8\n(all {len(y_all)} samples)",
+                 xy_data=(psi[30], float(mean_c[30])),
+                 xy_text_ax=(0.68, 0.46),
+                 color=C_MEAN, ha="center", va="top", rad=0.2)
+
+    # Arrow to top of SD band at psi[20]=2.6 kPa, top=0.359+0.088=0.447
+    sd_top_20 = float(np.clip(mean_c[20] + std_c[20], 0, Y_MAX))
+    _arrow_label(ax,
+                 "\u00b11 SD\n(spread across\nsoil types)",
+                 xy_data=(psi[20], sd_top_20),
+                 xy_text_ax=(0.22, 0.80),
+                 color=C_SD_DARK, ha="center", va="top", rad=-0.2)
+
+    # Stats info box (top right)
+    _infobox(ax,
+             f"Mean \u03b8s = {mean_c[0]:.3f}\n"
+             f"SD (\u03b8s)  = {y_all[:,0].std():.3f}",
+             x=0.97, y=0.97, ha="right", va="top")
+
+    _psi_xaxis(ax, psi)
+    _swcc_yaxis(ax)
+    _style(ax, xticks_fs=FONT_TICK_XLOG, yticks_fs=FONT_TICK_Y)
+    _panel_tag(ax, "(b) Statistical envelope  (mean \u03b8 \u00b1 1 SD)")
+
+
+# ---- Panel (c): Train / Val / Test split ------------------------------------
+def _plot_panel_c(ax, psi, y_train, y_val, y_test):
+    subsets = [
+        (y_train, C_TRAIN, 0.10),
+        (y_val,   C_VAL,   0.25),
+        (y_test,  C_TEST,  0.25),
+    ]
+    means = []
+    for y_sub, col, alpha in subsets:
+        for i in range(len(y_sub)):
+            ax.semilogx(psi, y_sub[i], color=col, alpha=alpha, lw=0.35, zorder=2)
+        m = np.mean(y_sub, axis=0)
+        ax.semilogx(psi, m, color=col, lw=2.4, zorder=4)
+        means.append(m)
+
+    # Arrow tips spread across three distinct ψ bands so each arrow lands
+    # in a visually distinct region of its own colour's curve band.
+    # i_train=35 (ψ≈30 kPa, left band) — blue thick mean is top-drawn at this x
+    # i_val=50  (ψ≈343 kPa, centre)    — orange thick mean
+    # i_test=68 (ψ≈1320 kPa, right)    — green thick mean
+    i_train, i_val, i_test = 35, 50, 68
+
+    _arrow_label(ax,
+                 f"Train\n(N = {len(y_train)},  70%)",
+                 xy_data=(psi[i_train], float(means[0][i_train])),
+                 xy_text_ax=(0.83, 0.96),
+                 color=C_TRAIN, ha="right", va="top", rad=-0.25)
+
+    _arrow_label(ax,
+                 f"Validation\n(N = {len(y_val)},  15%)",
+                 xy_data=(psi[i_val], float(means[1][i_val])),
+                 xy_text_ax=(0.88, 0.68),
+                 color=C_VAL, ha="right", va="top", rad=-0.10)
+
+    _arrow_label(ax,
+                 f"Test\n(N = {len(y_test)},  15%)",
+                 xy_data=(psi[i_test], float(means[2][i_test])),
+                 xy_text_ax=(0.94, 0.50),
+                 color=C_TEST, ha="right", va="top", rad=0.12)
+
+    # QC confirmation info box (top left — same horizontal side as before)
+    n_total = len(y_train) + len(y_val) + len(y_test)
+    _infobox(ax,
+             f"All {n_total} curves:\n"
+             f"  d\u03b8/d\u03c8 \u2264 0  (monotonic)\n"
+             f"Split: 70 / 15 / 15 %",
+             x=0.03, y=0.97, ha="left", va="top")
+
+    _psi_xaxis(ax, psi)
+    _swcc_yaxis(ax)
+    _style(ax, xticks_fs=FONT_TICK_XLOG, yticks_fs=FONT_TICK_Y)
+    _panel_tag(ax, "(c) Train / Validation / Test split")
+
+
+# ---- Panel (d): theta_s distribution histogram ------------------------------
+def _plot_panel_d(ax, y_train, y_val, y_test):
+    ts_train = y_train.max(axis=1)
+    ts_val   = y_val.max(axis=1)
+    ts_test  = y_test.max(axis=1)
+    ts_all   = np.concatenate([ts_train, ts_val, ts_test])
+
+    bins = np.linspace(ts_all.min() * 0.95, ts_all.max() * 1.02, 22)
+
+    # stacked histogram
+    counts_train, _ = np.histogram(ts_train, bins=bins)
+    counts_val,   _ = np.histogram(ts_val,   bins=bins)
+    counts_test,  _ = np.histogram(ts_test,  bins=bins)
+    x_centers = (bins[:-1] + bins[1:]) / 2
+
+    ax.bar(x_centers, counts_train,
+           width=np.diff(bins), color=C_TRAIN, alpha=0.82,
+           edgecolor="white", linewidth=0.4, label=f"Train  (N={len(ts_train)})", zorder=3)
+    ax.bar(x_centers, counts_val,
+           width=np.diff(bins), bottom=counts_train,
+           color=C_VAL, alpha=0.82,
+           edgecolor="white", linewidth=0.4, label=f"Validation  (N={len(ts_val)})", zorder=3)
+    ax.bar(x_centers, counts_test,
+           width=np.diff(bins), bottom=counts_train + counts_val,
+           color=C_TEST, alpha=0.82,
+           edgecolor="white", linewidth=0.4, label=f"Test  (N={len(ts_test)})", zorder=3)
+
+    # mean vertical line
+    mean_ts = ts_all.mean()
+    ax.axvline(mean_ts, color=C_MEAN, lw=1.6, ls="--", dashes=(6, 3), zorder=5)
+
+    # ---- arrow annotations ----
+    # Find the mode bin (tallest stacked bar)
+    total_counts = counts_train + counts_val + counts_test
+    mode_idx = int(np.argmax(total_counts))
+    mode_x   = float(x_centers[mode_idx])
+    mode_top = float(total_counts[mode_idx])
+
+    # Arrow to the top of the tallest bar
+    _arrow_label(ax,
+                 f"Mode \u03b8s \u2248 {mode_x:.2f}",
+                 xy_data=(mode_x, mode_top),
+                 xy_text_ax=(0.48, 0.93),
+                 color="#333333", ha="center", va="top", rad=0.0)
+
+    # Arrow to mean line
+    y_top = ax.get_ylim()[1] if ax.get_ylim()[1] > 0 else mode_top * 1.4
+    _arrow_label(ax,
+                 f"Mean = {mean_ts:.3f}",
+                 xy_data=(mean_ts, mode_top * 0.55),
+                 xy_text_ax=(0.20, 0.78),
+                 color=C_MEAN, ha="center", va="top", rad=-0.3)
+
+    # Colour key — Train / Validation / Test (upper right, no frame)
+    leg_handles = [
+        mpatches.Patch(
+            facecolor=C_TRAIN, edgecolor="white", linewidth=0.5, label="Train"),
+        mpatches.Patch(
+            facecolor=C_VAL, edgecolor="white", linewidth=0.5, label="Validation"),
+        mpatches.Patch(
+            facecolor=C_TEST, edgecolor="white", linewidth=0.5, label="Test"),
+    ]
+    leg = ax.legend(
+        handles=leg_handles, loc="upper right",
+        frameon=False,
+        borderpad=0.35, handlelength=1.4, handleheight=0.9,
+        fontsize=FONT_SMALL,
+    )
+    for t, col in zip(leg.get_texts(), (C_TRAIN, C_VAL, C_TEST)):
+        t.set_fontfamily("Arial")
+        t.set_fontsize(FONT_SMALL)
+        t.set_color(col)
+
+    ax.set_xlabel("Saturated water content \u03b8s  [\u2212]",
+                  fontsize=FONT_MAIN, fontfamily="Arial", labelpad=5)
+    ax.set_ylabel("Number of samples",
+                  fontsize=FONT_MAIN, fontfamily="Arial", labelpad=5)
+    ax.set_xlim(bins[0], bins[-1])
+    ax.set_ylim(bottom=0)
+
+    ax.set_facecolor("white")
+    for sp in ax.spines.values():
+        sp.set_linewidth(0.8)
+        sp.set_color("black")
+    ax.tick_params(which="both", top=False, right=False, direction="in")
+    ax.tick_params(axis="x", labelsize=FONT_TICK)
+    ax.tick_params(axis="y", labelsize=FONT_TICK_Y)
+    ax.grid(False)
+    for lbl in ax.get_xticklabels():
+        lbl.set_fontfamily("Arial")
+        lbl.set_fontsize(FONT_TICK)
+    for lbl in ax.get_yticklabels():
+        lbl.set_fontfamily("Arial")
+        lbl.set_fontsize(FONT_TICK_Y)
+
+    _panel_tag(ax, "(d) Saturated water content  \u03b8s  distribution")
+
+
+# ---- Main -------------------------------------------------------------------
+def main() -> int:
+    dp = ROOT / "data_processed"
+    y_train = np.load(dp / "y_train.npy").astype(np.float32)
+    y_val   = np.load(dp / "y_val.npy").astype(np.float32)
+    y_test  = np.load(dp / "y_test.npy").astype(np.float32)
+    psi     = np.load(dp / "suction_grid.npy").astype(np.float32)
+    y_all   = np.vstack([y_train, y_val, y_test])
+
+    print(f"Loaded: train={len(y_train)}, val={len(y_val)}, test={len(y_test)}, "
+          f"total={len(y_all)}")
+    print(f"Suction grid : {len(psi)} pts, {psi.min():.3g} - {psi.max():.3g} kPa")
+    print(f"theta range  : {y_all.min():.4f} - {y_all.max():.4f}")
+
+    # ---- 2x2 figure — Pham-et-al-style SWCC ratio ≈ 1.6:1 (width:height) ----
+    # At 8.5 in wide: panel W ≈ 3.23 in → target H = W/1.6 ≈ 2.02 in
+    # → figure height = (2×2.02 + 0.38×2.02) / 0.88 ≈ 5.9 in
+    FIG_W, FIG_H = 8.5, 6.0
+    fig, axes = plt.subplots(
+        2, 2, figsize=(FIG_W, FIG_H),
+        gridspec_kw=dict(hspace=0.52, wspace=0.34),
+    )
+    ax_a, ax_b = axes[0]
+    ax_c, ax_d = axes[1]
+
+    _plot_panel_a(ax_a, psi, y_all)
+    _plot_panel_b(ax_b, psi, y_all)
+    _plot_panel_c(ax_c, psi, y_train, y_val, y_test)
+    _plot_panel_d(ax_d, y_train, y_val, y_test)
+
+    fig.align_ylabels([ax_a, ax_c])
+    fig.subplots_adjust(left=0.09, right=0.98, top=0.95, bottom=0.14)
+
+    stem    = "Figure3_SWCC_Preprocessing_q1"
+    pdf_out = PDF_DIR / f"{stem}.pdf"
+    png_out = PNG_DIR / f"{stem}.png"
+    fig.savefig(str(pdf_out), dpi=600, bbox_inches="tight", pad_inches=0.05)
+    fig.savefig(str(png_out), dpi=600, bbox_inches="tight", pad_inches=0.05)
+    plt.close(fig)
+    print(f"\nSaved:\n  {pdf_out}\n  {png_out}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

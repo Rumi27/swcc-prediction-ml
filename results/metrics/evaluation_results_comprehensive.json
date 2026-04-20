@@ -1,0 +1,38 @@
+{
+  "global_metrics": {
+    "rmse": 0.07553930966882613,
+    "mae": 0.021361701824912833,
+    "r2": -0.35831399729758195
+  },
+  "per_sample_metrics": {
+    "rmse_mean": 0.06263893115691307,
+    "rmse_median": 0.04962777734232863,
+    "rmse_90th": 0.08343141721036738,
+    "mae_mean": 0.02136170182491283,
+    "mae_median": 0.012292440882883966,
+    "r2_mean": -204299.2074682267,
+    "r2_median": -3.6573094364090935
+  },
+  "dry_end_metrics": {
+    "rmse": 0.001725928496997441,
+    "mae": 0.00021001795216377074,
+    "threshold_kpa": 10000.0
+  },
+  "sparse_data_metrics": {
+    "rmse": 0.101302075640234,
+    "mae": 0.03056858408633545,
+    "n_points": 8
+  },
+  "physics_compliance": {
+    "monotonicity_rate": 1.0,
+    "boundary_rate": 1.0,
+    "mean_error_at_s0": 0.18812144045014403,
+    "mean_error_at_smax": 3.179173185010942e-06
+  },
+  "baseline_comparison": {
+    "model": "gradient_boosting",
+    "rmse": 0.0345359045922075,
+    "mae": 0.0216307723802439,
+    "r2": 0.9542504026012684
+  }
+}
