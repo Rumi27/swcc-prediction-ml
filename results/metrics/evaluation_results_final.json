@@ -1,0 +1,36 @@
+{
+  "global_metrics": {
+    "rmse": 0.1818202838758769,
+    "mae": 0.12820216452955852,
+    "r2": -0.26803215849659767
+  },
+  "per_sample_metrics": {
+    "rmse_mean": 0.1726714044755821,
+    "rmse_median": 0.17667369615729844,
+    "rmse_std": 0.05694911505137186,
+    "mae_mean": 0.12820216452955854,
+    "mae_median": 0.1270872850396238,
+    "mae_std": 0.051471246678811214,
+    "r2_mean": -0.5838449866134519,
+    "r2_median": -0.54816346242112,
+    "r2_std": 0.651057908447439
+  },
+  "regime_metrics": {
+    "dry_end": {
+      "rmse": 0.03311864592839235,
+      "mae": 0.01721210001161841,
+      "threshold_kpa": 10000.0
+    },
+    "wet_end": {
+      "rmSE": 0.2581697802754763,
+      "mae": 0.22781841620663748,
+      "threshold_kpa": 100.0
+    }
+  },
+  "physics_compliance": {
+    "monotonicity_rate": 0.5357142857142857,
+    "boundary_satisfaction_rate": 1.0
+  },
+  "baseline_comparison": null,
+  "n_test_samples": 84
+}

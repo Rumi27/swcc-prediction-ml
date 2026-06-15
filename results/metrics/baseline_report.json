@@ -1,0 +1,52 @@
+{
+  "best_model": "gradient_boosting",
+  "best_rmse": 0.034535904592207546,
+  "best_mae": 0.021630772380243943,
+  "best_r2": 0.9542504026012684,
+  "all_results": [
+    {
+      "model": "gradient_boosting",
+      "dataset": "test",
+      "rmse": 0.034535904592207546,
+      "mae": 0.021630772380243943,
+      "r2": 0.9542504026012684,
+      "curve_rmse_mean": 0.02931966823720752,
+      "curve_rmse_std": 0.018250637261809415,
+      "curve_mae_mean": 0.021630772380243943,
+      "curve_mae_std": 0.014651215691067386
+    },
+    {
+      "model": "random_forest",
+      "dataset": "test",
+      "rmse": 0.035388966714589125,
+      "mae": 0.02173751376825374,
+      "r2": 0.9519623924897224,
+      "curve_rmse_mean": 0.028983587562250765,
+      "curve_rmse_std": 0.020305925665865126,
+      "curve_mae_mean": 0.021737513768253735,
+      "curve_mae_std": 0.016519122181380942
+    },
+    {
+      "model": "neural_network",
+      "dataset": "test",
+      "rmse": 0.10415217813504474,
+      "mae": 0.062339614095677405,
+      "r2": 0.5839147520853067,
+      "curve_rmse_mean": 0.07000597760341887,
+      "curve_rmse_std": 0.07711575267131683,
+      "curve_mae_mean": 0.062339614095677405,
+      "curve_mae_std": 0.0753677215713583
+    },
+    {
+      "model": "svm",
+      "dataset": "test",
+      "rmse": 0.11130568741985733,
+      "mae": 0.049752888756039775,
+      "r2": 0.5247957488423858,
+      "curve_rmse_mean": 0.06386439585197305,
+      "curve_rmse_std": 0.09116081940433331,
+      "curve_mae_mean": 0.04975288875603979,
+      "curve_mae_std": 0.07746515106772624
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+Model,Global RMSE,Global MAE,Global R²,Median Per-Sample RMSE,Dry-end RMSE (s > 10⁴ kPa),Monotonicity (%),Boundary Satisfaction (%),Global R2
+"VGParamNet (Run B, lambda_psi50=0.2)",0.08295796467954973,0.058115603736972415,0.747346,0.0651808072706732,0.05130589311212718,100.00%,100.00%,0.7360256181462799
+Gradient Boosting (Baseline),0.034536,0.021631,0.95425,,,Not enforced,Not enforced,

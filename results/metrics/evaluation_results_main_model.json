@@ -1,0 +1,43 @@
+{
+  "model_path": "results_pinn_fixed/checkpoints/pinn_best_model_fixed.keras",
+  "training_data": "real only (normalized)",
+  "global_metrics": {
+    "rmse": 0.08115959552085199,
+    "mae": 0.0640129263155918,
+    "r2": 0.7473464803135512
+  },
+  "per_sample_metrics": {
+    "rmse_mean": 0.07388207515840997,
+    "rmse_median": 0.06930380532431596,
+    "rmse_std": 0.03359045869581653,
+    "mae_mean": 0.06401292631559179,
+    "mae_median": 0.06194073641532702,
+    "mae_std": 0.02913320430923592,
+    "r2_mean": 0.6773256035827713,
+    "r2_median": 0.7517186768116766,
+    "r2_std": 0.2636710053047745
+  },
+  "regime_metrics": {
+    "dry_end": {
+      "rmse": 0.05914441115671787,
+      "mae": 0.04886491614339128,
+      "threshold_kpa": 10000.0
+    },
+    "wet_end": {
+      "rmse": 0.08227770878967942,
+      "mae": 0.06252301267913582,
+      "threshold_kpa": 100.0
+    }
+  },
+  "physics_compliance": {
+    "monotonicity_rate": 1.0,
+    "boundary_rate": 1.0
+  },
+  "baseline_comparison": {
+    "model": "gradient_boosting",
+    "rmse": 0.034535904592207546,
+    "mae": 0.021630772380243943,
+    "r2": 0.9542504026012684
+  },
+  "n_test_samples": 84
+}
