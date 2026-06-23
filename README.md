@@ -1,8 +1,8 @@
-# SWCC Prediction using Physics-Informed Machine Learning
+# Physics-Constrained Machine Learning for Simulation-Ready Soil--Water Retention Curves
 
 This repository contains the processed data, trained model weights, evaluation scripts, and figure-generation code for the paper:
 
-> **"From data to physically admissible soil water retention curves: Physics-constrained machine learning for stable unsaturated flow simulation"**
+> **"From data to physically admissible soil water retention curves: Physics-Constrained Machine Learning for Simulation-Ready Soil--Water Retention Curves"**
 > *(manuscript under review)*
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19656774.svg)](https://doi.org/10.5281/zenodo.19656774)
@@ -148,10 +148,9 @@ If you use this code or data, please cite:
 
 ```bibtex
 @article{Avzalshoev2026,
-  title   = {From data to physically admissible soil water retention curves:
-             Physics-constrained machine learning for stable unsaturated flow simulation},
+  title   = {Physics-Constrained Machine Learning for Simulation-Ready Soil--Water Retention Curves},
   author  = {Avzalshoev, Zafar and Chun, Pang-jo and Pham, Tuan A.},
-  journal = {Journal of Hydrology},
+  journal = {to be determined},
   year    = {2026},
   doi     = {10.5281/zenodo.19656774}
 }
